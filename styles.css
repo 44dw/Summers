@@ -1,0 +1,118 @@
+.hand, .table {
+	position: absolute;
+	left: 5%;	
+	display: flex;
+}
+
+#row1 {top: 200px;}
+#row2 {top: 320px;}
+#row3 {top: 440px;}
+#row4 {top: 560px;}
+
+#deck {top: -40px;}
+#deck2 {top: 70px;}
+
+#tree {
+	height: 700px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: -1;
+}
+
+@keyframes fall {
+	from {
+		top: 150px;
+		transform: rotate(0deg);
+		}
+	to {
+		top: 700px;
+		transform: rotate(430deg);
+		}
+}
+
+#apple {
+	height: 70px;
+	position: absolute;
+	right: 90px;
+	top: 150px;
+	z-index: 100;
+	animation-name: fall;
+	animation-duration: 3s;
+	animation-timing-function: linear;
+}
+
+
+#prize {
+	display: none;
+	width: inherit;
+	height: 40px;
+	font-size: 50px;
+	position: absolute;
+	left: 20%;
+	top: 140px;
+}
+
+#basket {
+	height: 300px;
+	position: absolute;
+	left: 0;
+	top: 400px;
+	z-index: -1;
+}
+
+#level {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+}
+
+#counter {
+	position: absolute;
+	top: 600px;
+	left: 108px;
+	font-size: 65px;
+	text-shadow: 0 0 10px white;
+}
+
+#finalCount {
+	font-size: 40px;
+	display: none;
+	position: absolute;
+	top: 500px;
+	left: 19%;
+}
+
+#restart {
+	font-style: italic;
+	font-size: 50px;
+	display: none;
+	position: absolute;
+	top: 600px;
+	left: 19%;
+}
+
+#restart:hover {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.card, .holder {
+	height: 100px;
+	width: 80px;
+	border-radius: 10px;
+	margin-right: 10px;
+}
+
+.card {
+	border: 1px solid black;
+	text-align: center;
+	line-height: 100px;
+	+background-color: white;
+	background: linear-gradient(to bottom right, #EEE8AA, #FFFFFF)
+	
+}
+
+.holder {border: 1px dashed black;}
+

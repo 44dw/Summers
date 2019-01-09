@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>summers</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css"></head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src='winCount.js'></script>
+  <script src='generate.js'></script>
+  <script src='getRandomInt.js'></script>
+  <script src='clear.js'></script>
+<body>
+	<div id="deck" class="hand"></div>
+	<div id="deck2" class="hand"></div>
+	<div id="level">Уровень: <span>1</span></div>
+	<div id="restart" onclick="window.location.reload()">Начать заново</div>
+	<div id="prize">Лови яблочко!</div>	
+	<div id="row1" class="table">
+	</div>
+	<div id="row2" class="table">
+	</div>
+	<img id="tree" src="tree2.png">
+	<img id="basket" src="basket.jpg">
+	<div id="counter">0</div>
+	<div id="finalCount">Ты поймал <span></span> яблок</div>
+<script>
+let coordsHolder;
+let level = 1;
+let baskets = ["basket.jpg", "basket1.jpg", "basket2.jpg", "basket3.jpg", "basket4.jpg", "basket4.jpg"];
+let nowBasket = 0;
+
+generate(level); //генерируем уроваень
+
+document.ondragstart = function() {
+	return false;
+}
+
+function on(evt) {
+	if (!evt.target.classList.contains('card')) return; //проверка - есть ли у элемента указанный класс
+	let target = evt.target;
+		
+	let crds = getCoords(target); //вычисляем координаты элемента с прокруткой
+	
+	let shiftX = evt.pageX - crds.left; //вычисляем сдвиг к указателю мыши внутри элемента
+	let shiftY = evt.pageY - crds.top;
+	
+	$('body')[0].append(target); //прикрепляем к "body"
+	target.style.position = 'absolute';
+	
+	moveAt(evt); //определяем новое местоположение
+	
+	target.style.zIndex = 1000; //над другими элементами
+
+	function go(evt) {
+		moveAt(evt);
+	} //двигаем элемент
+	
+	function up(event) {
+		let x = event.clientX;
+		let y = event.clientY;
+		for (let i=0; i<$('.holder').length; i++) {
+			let holderRect = $('.holder')[i].getBoundingClientRect();
+			if ((x > holderRect.left) && (x < holderRect.right) && (y > holderRect.top) && (y < holderRect.bottom)) { //проверяем, "висит" ли элемент над каким-нибудь холдером
+				if ($('.holder')[i].children.length) {
+					($('#deck')[0].getBoundingClientRect().width + $('#deck')[0].getBoundingClientRect().left + 100) < document.documentElement.clientWidth ? $('#deck')[0].append($('.holder')[i].children[0]) : $('#deck2')[0].append($('.holder')[i].children[0]); //если место занято - переносим содержимое хольдера в колоду
+				}
+				$('.holder')[i].append(target); //если да - прикрепляем
+				target.style.position = 'static';
+				if (winCount(level)) { //если выражение составлено правильно...
+					$('#prize')[0].style.display = 'block';
+					$('body').append('<img id="apple" src="apple.png">'); //бросаем яблоко
+					level++;
+					let timeout = setTimeout(function() {
+						$('#apple').remove();
+						$('#prize').text('Не поймал!');
+						setTimeout(function() {
+							generate(level);
+						}, 2000);
+					}, 3000);
+					$('#apple').click(function() {
+						$('#apple').remove();
+						clearTimeout(timeout);
+						$('#prize').text('Молодец!');
+						$('#basket')[0].src = baskets[++nowBasket];
+						$('#counter')[0].textContent = +($('#counter')[0].textContent) + 1;
+						setTimeout(function() {
+							generate(level);
+						}, 2000);
+					});
+				}
+			}
+		}
+		if (target.parentElement == document.body) { //если не над холдером - возвращаем элемент в дек
+				target.style.position = 'static';
+				($('#deck')[0].getBoundingClientRect().width + 100) < document.documentElement.clientWidth ? $('#deck')[0].append(target) : $('#deck2')[0].append(target);
+			}
+		document.removeEventListener('mousemove', go);
+		document.removeEventListener('mouseup', up);
+	}
+	
+	function moveAt(evt) { //определяем новое местоположение
+		target.style.left = evt.pageX - shiftX + 'px'; //координаты мыши относительно страницы + сдвиг внутри элемента
+		target.style.top = evt.pageY - shiftY + 'px';
+	}
+	
+	function getCoords(elem) {
+		let rects = elem.getBoundingClientRect();
+		let obj = {};
+		obj.top = rects.top + pageYOffset;
+		obj.left = rects.left + pageXOffset;
+		return obj;
+	}
+	
+	document.addEventListener('mousemove', go);
+	document.addEventListener('mouseup', up);
+	document.onselectstart = function() {return false;} 
+	document.onmousedown = function() {return false;}
+}
+
+document.addEventListener('mousedown', on);
+</script>
+</body>
+
+</html>
